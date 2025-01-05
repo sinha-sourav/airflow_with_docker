@@ -1,0 +1,28 @@
+Main Link: https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#using-custom-images 
+YouTube Link: https://www.youtube.com/watch?v=3xyoM28B40Y
+
+Make sure you're either on a Linux machine or WSL 2 machine. 
+
+1. Create a virtual environment and ensure that docker is running. Navigate to a folder where you want to create all folders. 
+2. Fetch docker compose yaml. 
+3. Set the right Airflow User. 
+4. Initialize airflow: "sudo docker compose up airflow-init". This will initialize an airflow user with username: airflow and password: airflow 
+5. Start airflow: "sudo docker compose up" 
+6. Navigate to the localhost:8080 webserver for Airflow UI. We can check for the webserver in the docker-compose.yml file. 
+7. To connect airflow with Postgres In the services section of docker-compose.yml, specify a port: "ports: \n - "5432:5432" 
+	Then add a pgadmin client. Sometimes we have to change the container name to resolve conflicts. 
+	We can then reinitialize airflow (sudo docker compose up airflow-init) 
+	Then log into pgadmin client at localhost:5050 (or whatever port number is specified) and register a new server. The login username and password are the ones specified in the pgadmin client in docker-compose.yml. 
+	Host name should be available by running in the terminal "sudo docker container ls" and then choosing the ID of the one with post-gres.entry, and then running "sudo docker inspect <id>" and grabbing IP address. 
+	Port should be the same as the port number specified in postgres under services in docker-compose.yml. 
+	Maintenance database is postgres, username: admin and password is the same as in pgadmin client. 
+	In the database server create a database, and name it appropriately. This DB name would be used later when creating a PostgresHook in the dag file. 
+	Now go the AIrflow UI > Admin > Connections and create a new connection. 
+	Provide an appropriate connection name, postgres as connection type, Host should be the same IP address that was defined as the host of the server in the pgadmin client, the name of the database is the same 
+		as the one used in the postgres database under the pgadmin client. Login username and password should be the airflow UI ones. Port number should be the postgres port number specified in the postgres section 
+		of docker-compose.yml 
+8. Now write the dag and refresh the Airflow UI and trigger it. 
+9. This should run the DAG and populate the table in the postgres table in the pgadmin client. Refresh the client if needed. The data can be inspected by querying the data in the pgadmin client. 
+
+	
+	
